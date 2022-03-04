@@ -11,7 +11,7 @@ class Courses extends Component {
     let courseLinks;
     if (courses.length > 0) {
       courseLinks = courses.map(course => 
-          <Link className='course--module course--link' to=''>
+          <Link className='course--module course--link' to='/'>
             <h2 className='course--label'>Course</h2>
             <h3 className='course--title'>{course.title}</h3>
           </Link>
