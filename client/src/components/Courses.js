@@ -19,7 +19,8 @@ class Courses extends Component {
   getCourses = () => {
     fetch('http://localhost:5000/api/courses')
       .then(res => res.json())
-      .then(res => this.setState(courses))
+      .then(res => JSON.parse(res))
+      .then(res => this.setState({courses: res}))
       .catch(err => {console.log('Error fetching and parsing data', err)});
   }
 
