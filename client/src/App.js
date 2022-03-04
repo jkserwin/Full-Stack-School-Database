@@ -10,25 +10,6 @@ import Courses from './components/Courses';
 import NotFound from './components/NotFound';
 
 class App extends Component {
-
-  constructor() {
-    super();
-    this.state ={
-      courses: [],
-    };
-
-  }
-
-  componentDidMount() {
-    this.getCourses();
-  }
-
-  getCourses = () => {
-    fetch('http://localhost:5000/api/courses')
-      .then(res => res.json())
-      .then(res => this.setState(courses))
-      .catch(err => {console.log('Error fetching and parsing data', err)});
-  }
   
   render() {
     

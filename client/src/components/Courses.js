@@ -5,9 +5,26 @@ import UnhandledError from './UnhandledError';
 
 class Courses extends Component {
 
-  render() {
+  constructor() {
+    super();
+    this.state ={
+      courses: [],
+    };
+  }
 
-    const courses = this.props.courses;
+  componentDidMount() {
+    this.getCourses();
+  }
+
+  getCourses = () => {
+    fetch('http://localhost:5000/api/courses')
+      .then(res => res.json())
+      .then(res => this.setState(courses))
+      .catch(err => {console.log('Error fetching and parsing data', err)});
+  }
+
+  render() {
+    const courses = this.state.courses;
     let courseLinks;
     if (courses.length > 0) {
       courseLinks = courses.map(course => 
