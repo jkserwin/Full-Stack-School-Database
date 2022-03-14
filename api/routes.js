@@ -39,7 +39,7 @@ router.post('/users', asyncHandler(async (req, res) => {
 // Route that returns all courses and associated users.
 router.get('/courses', asyncHandler(async (req, res) => {
     const courses = await Course.findAll({
-        attributes: [ 'title', 'description', 'estimatedTime', 'materialsNeeded', 'userId' ],
+        attributes: [ 'id', 'title', 'description', 'estimatedTime', 'materialsNeeded', 'userId' ],
         include: [
             {
                 model: User,

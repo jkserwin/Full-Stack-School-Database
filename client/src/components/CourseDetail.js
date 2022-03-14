@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import UnhandledError from './UnhandledError';
 
 function CourseDetail() {
 
   const [ course, setCourse ] = useState([]);
+  const { id } = useParams();
 
   useEffect((id) => {
     fetch(`http://localhost:5000/api/courses/${id}`)
       .then(res => res.json())
-      .then(data => this.setCourse(data))
+      .then(data => setCourse(data))
       .catch(err => {console.log('Error fetching and parsing data', err)});
   })
 
