@@ -1,58 +1,90 @@
-import React, { Component } from 'react';
+import React, { createContext, useState } from 'react';
 import Cookies from 'js-cookie';
-import Data from './Data';
+import { useNavigate } from 'react-router-dom';
+import config from './config';
 
-const Context = React.createContext();
+export const Context = createContext();
 
-export class Provider extends Component {
+const apiHandler = (path, method = 'GET', body = null, requiresAuth = false, credentials = null) => {
+  const url = config.apiBaseUrl + path;
 
-  constructor() {
-    super();
-    this.data = new Data();
-    this.cookie = Cookies.get('authenticatedUser');
+  const options = {
+    method,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  };
 
-    this.state = {
-      authenticatedUser: this.cookie? JSON.parse(this.cookie) : null
-    };
+  if (body !== null) {
+    options.body = JSON.stringify(body)
   }
 
-  render() {
-    const { authenticatedUser } = this.state;
-    const value = {
-      authenticatedUser,
-      data: this.data,
-      actions: {
-        signIn: this.signIn,
-        signOut: this.signOut
-      },
-    };
-    return (
-      <Context.Provider value={value}>
-        {this.props.children}
-      </Context.Provider>
-    );
+  if (requiresAuth) {
+    const encodedCredentials = btoa(`${credentials.emailAddress}:${credentials.password}`);
+    options.headers['Authorization'] = `Basic ${encodedCredentials}`;
+  }
+  return fetch(url, options)
+}
+
+export const Provider = (props) => {
+
+  const [currentUser, setCurrentUser] = useState();
+  const [authenticatedUser, setAuthenticatedUser] = useState();
+  const [data, setData] = useState();
+
+  const navigate = useNavigate();
+    
+  const getUser = async (emailAddress, password) => {
+    await apiHandler('/users', 'GET', null, true, {emailAddress, password})
+      .then(res => res.json())
+
+
   }
 
-  signIn = async (username, password) => {
-    const user = await this.data.getUser(username, password);
-    if (user !== null) {
-      this.setState(() => {
-        return {
-          authenticatedUser: user,
-        };
-      });
-      const cookieOptions = {
-        expires: 2
-      };
-      Cookies.set('authenticatedUser', JSON.stringify(user), cookieOptions);
+  const signIn = async (emailAddress, password) => {
+    const response = await this.apiHandler(`/users`, 'GET', null, true, {emailAddress, password});
+    if (response.status === 200) {
+      return response.json().then(data => data);
     }
-    return user;
+    else if (response.status === 401) {
+      return null;
+    }
+    else {
+      throw new Error();
+    }
   }
 
-  signOut = () => {
+  const signOut = () => {
     this.setState({ authenticatedUser: null });
     Cookies.remove('authenticatedUser');
   }
+
+  // createCourse function
+  // createUser function
+  const cancelHandler = (e) => {
+    e.preventDefault();
+    navigate('/');
+  }
+
+  const value = {
+    currentUser,
+    authenticatedUser,
+    data,
+    actions: {
+      getUser: getUser,
+      signIn: signIn,
+      signOut: signOut,
+      // createCourse: createCourse,
+      // createUser: createUser,
+      cancelHandler: cancelHandler,
+    },
+  };
+
+  return (
+    <Context.Provider value={this.value}>
+      {props.children}
+    </Context.Provider>
+  );
 
 }
 

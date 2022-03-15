@@ -52,15 +52,17 @@ router.get('/courses', asyncHandler(async (req, res) => {
 
 // Route that returns a specific course and associated users.
 router.get('/courses/:id', asyncHandler(async (req,res) => {
-    const course = await Course.findOne({
-        attributes: [ 'title', 'description', 'estimatedTime', 'materialsNeeded', 'userId' ],
-        include: [
-            {
-                model: User,
-                attributes: [ 'firstName', 'lastName', 'emailAddress' ]
-            }
-        ]
-    });
+    const course = await Course.findByPk(
+        req.params.id,
+        { attributes: [ 'id', 'title', 'description', 'estimatedTime', 'materialsNeeded', 'userId' ],
+            include: [
+                {
+                    model: User,
+                    attributes: [ 'firstName', 'lastName', 'emailAddress' ]
+                }
+            ]
+        }
+    );
     res.status(200).json(course);
 }));
 

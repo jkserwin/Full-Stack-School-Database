@@ -15,6 +15,11 @@ import UserSignIn from './components/UserSignIn';
 import UserSignUp from './components/UserSignUp';
 import UserSignOut from './components/UserSignUp';
 
+import withContext from './Context';
+
+const UserSignInWithContext = withContext(UserSignIn);
+const CreateCourseWithContext = withContext(CreateCourse);
+
 class App extends Component {
   
   render() {
@@ -25,10 +30,10 @@ class App extends Component {
           <Header />
           <Routes>
             <Route path="/" element={<Courses/>} />
-            <Route path="/courses/create" element={<CreateCourse/>} />
+            <Route path="/courses/create" element={CreateCourseWithContext} />
             <Route path="/courses/:id/update" element={<UpdateCourse/>} />
             <Route path="/courses/:id" element={<CourseDetail/>} />
-            <Route path="/signin" element={<UserSignIn/>} />
+            <Route path="/signin" element={UserSignInWithContext} />
             <Route path="/signup" element={<UserSignUp/>} />
             <Route path="/signout" element={<UserSignOut/>} />
             <Route element={NotFound} />
