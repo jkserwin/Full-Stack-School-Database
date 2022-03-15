@@ -35,14 +35,20 @@ export const Provider = (props) => {
   const navigate = useNavigate();
     
   const getUser = async (emailAddress, password) => {
-    await apiHandler('/users', 'GET', null, true, {emailAddress, password})
-      .then(res => res.json())
-
-
+    const response = await apiHandler(`/users`, 'GET', null, true, {emailAddress, password});
+    if (response.status === 200) {
+      return response.json().then(data => data);
+    }
+    else if (response.status === 401) {
+      return null;
+    }
+    else {
+      throw new Error();
+    }
   }
 
   const signIn = async (emailAddress, password) => {
-    const response = await this.apiHandler(`/users`, 'GET', null, true, {emailAddress, password});
+    const response = await apiHandler('/users', 'GET', null, true, {emailAddress, password});
     if (response.status === 200) {
       return response.json().then(data => data);
     }
@@ -59,8 +65,36 @@ export const Provider = (props) => {
     Cookies.remove('authenticatedUser');
   }
 
-  // createCourse function
-  // createUser function
+  const createCourse = async (course) => {
+    const response = await apiHandler('/courses', 'POST', course);
+    if (response.status === 201) {
+      return [];
+    }
+    else if (response.status === 400) {
+      return response.json().then(data => {
+        return data.errors;
+      });
+    }
+    else {
+      throw new Error();
+    }
+  }
+  
+  const createUser = async (user) => {
+    const response = await apiHandler('/users', 'POST', user);
+    if (response.status === 201) {
+      return [];
+    }
+    else if (response.status === 400) {
+      return response.json().then(data => {
+        return data.errors;
+      });
+    }
+    else {
+      throw new Error();
+    }
+  }
+
   const cancelHandler = (e) => {
     e.preventDefault();
     navigate('/');
@@ -74,14 +108,14 @@ export const Provider = (props) => {
       getUser: getUser,
       signIn: signIn,
       signOut: signOut,
-      // createCourse: createCourse,
-      // createUser: createUser,
+      createCourse: createCourse,
+      createUser: createUser,
       cancelHandler: cancelHandler,
     },
   };
 
   return (
-    <Context.Provider value={this.value}>
+    <Context.Provider value={value}>
       {props.children}
     </Context.Provider>
   );
@@ -90,12 +124,12 @@ export const Provider = (props) => {
 
 export const Consumer = Context.Consumer;
 
-export default function withContext(Component) {
-  return function ContextComponent(props) {
-    return (
-      <Context.Consumer>
-        {context => <Component {...props} context={context} />}
-      </Context.Consumer>
-    );
-  }
-}
+// export default function withContext(Component) {
+//   return function ContextComponent(props) {
+//     return (
+//       <Context.Consumer>
+//         {context => <Component {...props} context={context} />}
+//       </Context.Consumer>
+//     );
+//   }
+// }

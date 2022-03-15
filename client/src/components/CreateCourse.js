@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Context } from '../Context';
 
 import UnhandledError from './UnhandledError';
 
 function CreateCourse() {
 
+  const context = useContext(Context);
+  
   const [ newCourse, setNewCourse ] = useState({
     title: '',
     description: '',
     estimatedTime: '',
     materialsNeeded: '',
+    errors: [],
   });
 
   const cancel = (e) => {
-    actions.cancelHandler(e);
+    context.actions.cancelHandler(e);
   }
 
   // add onSubmit={createCourse} to form tag
