@@ -24,8 +24,8 @@ class App extends Component {
     return (
       <Router>
         <div className="App">
-          <Header />
           <Provider>
+            <Header />
             <Routes>
               <Route path="/" element={<Courses/>} />
               <Route path="/courses/create" element={<CreateCourse/>}/>

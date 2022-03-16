@@ -1,12 +1,11 @@
 import React, { createContext, useState } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import config from './config';
 
 export const Context = createContext();
 
-const apiHandler = (path, method = 'GET', body = null, requiresAuth = false, credentials = null) => {
-  const url = config.apiBaseUrl + path;
+const apiHandler = (path, method = 'GET', body = null, authRequired = false, credentials = null) => {
+  const url = 'http://localhost:5000/api/' + path;
 
   const options = {
     method,
@@ -16,19 +15,18 @@ const apiHandler = (path, method = 'GET', body = null, requiresAuth = false, cre
   };
 
   if (body !== null) {
-    options.body = JSON.stringify(body)
+    options.body = JSON.stringify(body);
   }
 
-  if (requiresAuth) {
+  if (authRequired) {
     const encodedCredentials = btoa(`${credentials.emailAddress}:${credentials.password}`);
     options.headers['Authorization'] = `Basic ${encodedCredentials}`;
   }
-  return fetch(url, options)
+  return fetch(url, options);
 }
 
 export const Provider = (props) => {
 
-  const [currentUser, setCurrentUser] = useState();
   const [authenticatedUser, setAuthenticatedUser] = useState();
   const [data, setData] = useState();
 
@@ -37,7 +35,7 @@ export const Provider = (props) => {
   const getUser = async (emailAddress, password) => {
     const response = await apiHandler(`/users`, 'GET', null, true, {emailAddress, password});
     if (response.status === 200) {
-      return response.json().then(data => data);
+      return response.json();
     }
     else if (response.status === 401) {
       return null;
@@ -48,16 +46,13 @@ export const Provider = (props) => {
   }
 
   const signIn = async (emailAddress, password) => {
-    const response = await apiHandler('/users', 'GET', null, true, {emailAddress, password});
-    if (response.status === 200) {
-      return response.json().then(data => data);
+    const user = await getUser(emailAddress, password);
+    if (user !== null) {
+      setAuthenticatedUser({ ...user, password });
+    } else if (user === null) {
+
     }
-    else if (response.status === 401) {
-      return null;
-    }
-    else {
-      throw new Error();
-    }
+    return user;
   }
 
   const signOut = () => {
@@ -101,7 +96,6 @@ export const Provider = (props) => {
   }
 
   const value = {
-    currentUser,
     authenticatedUser,
     data,
     actions: {

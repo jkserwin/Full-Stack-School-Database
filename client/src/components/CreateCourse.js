@@ -7,14 +7,14 @@ import UnhandledError from './UnhandledError';
 function CreateCourse() {
 
   const context = useContext(Context);
-  
-  const [ newCourse, setNewCourse ] = useState({
-    title: '',
-    description: '',
-    estimatedTime: '',
-    materialsNeeded: '',
-    errors: [],
-  });
+
+  const [ title, setTitle ] = useState();
+  const [ description, setDescription ] = useState();
+  const [ estimatedTime, setEstimatedTime ] = useState();
+  const [ materialsNeeded, setMaterialsNeeded ] = useState();
+
+  const authUser = context.authenticatedUser;
+  const createCourse = context.actions.createCourse;
 
   const cancel = (e) => {
     context.actions.cancelHandler(e);
@@ -25,23 +25,23 @@ function CreateCourse() {
     <main>
       <div className='wrap'>
         <h2>Create Course</h2>
-        <form>
+        <form onSubmit={createCourse}>
           <div className='main--flex'>
             <div>
               <label for='courseTitle'>Course Title</label>
-              <input for='courseTitle' name='courseTitle' type='text' value='' />
+              <input for='courseTitle' name='courseTitle' type='text' value={title} onChange={(e) => setTitle(e.target.value)}/>
 
-              <p>By Joe Smith</p>
+              <p>By {authUser.firstName} {authUser.lastName}</p>
 
               <label for='courseDescription'>Course Description</label>
-              <textarea id='courseDescription' name='courseDescription'></textarea>
+              <textarea id='courseDescription' name='courseDescription' value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
             </div>
             <div>
               <label for='estimatedTime'>Estimated Time</label>
-              <input for='estimatedTime' name='estimatedTime' type='text' value='' />
+              <input for='estimatedTime' name='estimatedTime' type='text' value={estimatedTime} onChange={(e) => setEstimatedTime(e.target.value)}/>
 
               <label for='materialsNeeded'>Materials Needed</label>
-              <textarea id='materialsNeeded' name='materialsNeeded'></textarea>
+              <textarea id='materialsNeeded' name='materialsNeeded' value={materialsNeeded} onChange={(e) => setMaterialsNeeded(e.target.value)}></textarea>
             </div>
           </div>
           <button className='button' type='submit'>Create Course</button>

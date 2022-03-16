@@ -6,7 +6,6 @@ import UnhandledError from './UnhandledError';
 function CourseDetail() {
 
   const [ course, setCourse ] = useState('');
-  const [ user, setUser ] = useState('')
   const { id } = useParams();
 
   useEffect(() => {
