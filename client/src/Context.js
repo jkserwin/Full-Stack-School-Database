@@ -30,6 +30,10 @@ export const Provider = (props) => {
   const [authenticatedUser, setAuthenticatedUser] = useState();
   const [data, setData] = useState();
 
+  const cookie = Cookies.get('authenticatedUser');
+  console.log(cookie);
+  console.log(authenticatedUser);
+
   const navigate = useNavigate();
     
   const getUser = async (emailAddress, password) => {
@@ -49,6 +53,10 @@ export const Provider = (props) => {
     const user = await getUser(emailAddress, password);
     if (user !== null) {
       setAuthenticatedUser({ ...user, password });
+      const cookieOptions = {
+        expires: 1
+      };
+      Cookies.set('authenticatedUser', JSON.stringify(user), cookieOptions);
     } else if (user === null) {
 
     }
@@ -56,7 +64,7 @@ export const Provider = (props) => {
   }
 
   const signOut = () => {
-    this.setState({ authenticatedUser: null });
+    setAuthenticatedUser(null);
     Cookies.remove('authenticatedUser');
   }
 

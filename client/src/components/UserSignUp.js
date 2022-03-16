@@ -21,13 +21,13 @@ function UserSignUp() {
         <h2>Sign Up</h2>
         <form>
           <label for='firstName'>First Name</label>
-          <input id='firstName' name='firstName' type='text' value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+          <input id='firstName' name='firstName' type='text' defaultValue='' onChange={(e) => setFirstName(e.target.value)}/>
           <label for='lastName'>Last Name</label>
-          <input id='lastName' name='lastName' type='text' value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+          <input id='lastName' name='lastName' type='text' defaultValue='' onChange={(e) => setLastName(e.target.value)}/>
           <label for='emailAddress'>Email Address</label>
-          <input id='emailAddress' name='emailAddress' type='email' value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)}/>
+          <input id='emailAddress' name='emailAddress' type='email' defaultValue='' onChange={(e) => setEmailAddress(e.target.value)}/>
           <label for='password'>Password</label>
-          <input id='password' name='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <input id='password' name='password' type='password' defaultValue='' onChange={(e) => setPassword(e.target.value)}/>
           <button className='button' type='submit'>Sign Up</button>
           <button className='button button-secondary' onClick={cancel}>Cancel</button>
         </form>

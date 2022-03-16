@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
 
 function UserSignIn() {
   
   const context = useContext(Context);
+  const navigate = useNavigate();
 
   const [ emailAddress, setEmailAddress ] = useState();
   const [ password, setPassword ] = useState();
@@ -12,16 +13,22 @@ function UserSignIn() {
   const cancel = (e) => {
     context.actions.cancelHandler(e);
   }
-  
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    context.actions.signIn(emailAddress, password);
+    navigate('/');
+  };
+
   return(
     <main>
       <div className='form--centered'>
         <h2>Sign In</h2>
-        <form onSubmit={context.actions.signIn}>
+        <form onSubmit={handleSubmit}>
           <label for='emailAddress'>Email Address</label>
-          <input id='emailAddress' name='emailAddress' type='email' value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)}/>
+          <input id='emailAddress' name='emailAddress' type='email' defaultValue='' onChange={(e) => setEmailAddress(e.target.value)}/>
           <label for='password'>Password</label>
-          <input id='password' name='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <input id='password' name='password' type='password' defaultValue='' onChange={(e) => setPassword(e.target.value)}/>
           <button className='button' type='submit'>Sign In</button>
           <button className='button button-secondary' onClick={cancel}>Cancel</button>
         </form>

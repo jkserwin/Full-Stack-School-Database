@@ -1,71 +1,64 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Context } from '../Context';
 
 import UnhandledError from './UnhandledError';
 
-class UpdateCourse extends Component {
+function UpdateCourse () {
 
-  constructor() {
-    super();
-    this.state ={
-      course: [],
-    };
+  const context = useContext(Context);
+  const { id } = useParams();
+
+  const [ course, setCourse ] = useState('');
+
+  const [ title, setTitle ] = useState(course.title);
+  const [ description, setDescription ] = useState(course.description);
+  const [ estimatedTime, setEstimatedTime ] = useState(course.estimatedTime);
+  const [ materialsNeeded, setMaterialsNeeded ] = useState(course.materialsNeeded);
+
+  const authUser = context.authenticatedUser;
+
+  const cancel = (e) => {
+    context.actions.cancelHandler(e);
   }
 
-  // componentDidMount() {
-  //   this.getCourseDetail(req.params.id);
-  // }
-
-  getCourseDetail = (id) => {
+  useEffect(() => {
     fetch(`http://localhost:5000/api/courses${id}`)
-      .then(res => res.json())
-      .then(res => this.setState({course: res}))
-      .catch(err => {console.log('Error fetching and parsing data', err)});
-  }
+    .then(res => res.json())
+    .then(res => this.setState({course: res}))
+    .catch(err => {console.log('Error fetching and parsing data', err)});
+  }, [id]);
 
-  render() {
-    const course = this.state.course;
-    let materialsList;
-    if (course.materials.length > 0) {
-      materialsList = course.materials.map(item => 
-          <li>{item}</li>
-        );
-    } else {
-      materialsList = `<li>No materials listed</li>`;
-    }
+  return(
+    <main>
+      <div className='wrap'>
+        <h2>Update Course</h2>
+        <form>
+          <div className='main--flex'>
+            <div>
+              <label for='courseTitle'>Course Title</label>
+              <input for='courseTitle' name='courseTitle' type='text' value={course.title} onChange={(e) => setTitle(e.target.value)}/>
 
-    return(
-      <main>
-        <div className='wrap'>
-          <h2>Update Course</h2>
-          <form>
-            <div className='main--flex'>
-              <div>
-                <label for='courseTitle'>Course Title</label>
-                <input for='courseTitle' name='courseTitle' type='text' value={course.title} />
+              <p>By {authUser.firstName} {authUser.lastName}</p>
 
-                <p>By Joe Smith</p>
-
-                <label for='courseDescription'>Course Description</label>
-                <textarea id='courseDescription' name='courseDescription'>{course.description}</textarea>
-              </div>
-              <div>
-                <label for='estimatedTime'>Estimated Time</label>
-                <input for='estimatedTime' name='estimatedTime' type='text' value={course.estimatedTime} />
-
-                <label for='materialsNeeded'>Materials Needed</label>
-                <textarea id='materialsNeeded' name='materialsNeeded'>{course.materialsNeeded}</textarea>
-              </div>
+              <label for='courseDescription'>Course Description</label>
+              <textarea id='courseDescription' name='courseDescription' onChange={(e) => setDescription(e.target.value)}>{course.description}</textarea>
             </div>
-            <button className='button' type='submit'>Update Course</button>
-            <button className='button button-secondary' onclick="event.preventDefault(); location.href='index.html';">Cancel</button>
-          </form>
-          
-        </div>    
-      </main>
-    );
-  }
+            <div>
+              <label for='estimatedTime'>Estimated Time</label>
+              <input for='estimatedTime' name='estimatedTime' type='text' value={course.estimatedTime} onChange={(e) => setEstimatedTime(e.target.value)}/>
 
+              <label for='materialsNeeded'>Materials Needed</label>
+              <textarea id='materialsNeeded' name='materialsNeeded' onChange={(e) => setMaterialsNeeded(e.target.value)}>{course.materialsNeeded}</textarea>
+            </div>
+          </div>
+          <button className='button' type='submit'>Update Course</button>
+          <button className='button button-secondary' onClick={cancel}>Cancel</button>
+        </form>
+        
+      </div>    
+    </main>
+  );
 }
 
 export default UpdateCourse;
