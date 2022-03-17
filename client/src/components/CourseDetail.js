@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useParams, Navigate } from 'react-router-dom';
+import { Context } from '../Context';
 
 import UnhandledError from './UnhandledError';
 
 function CourseDetail() {
 
-  const [ course, setCourse ] = useState('');
+  const context = useContext(Context);
+  const authUser = context.authenticatedUser;
+
+  const [ course, setCourse ] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -15,11 +19,15 @@ function CourseDetail() {
       .catch(err => {console.log('Error fetching and parsing data', err)});
   }, [id]);
 
-  const deleteCourse = () => {
-    fetch(`http://localhost:5000/api/courses/${id}`, {method: 'DELETE'})
-      .then(res => {console.log('Course deleted')})
-      .catch(err => {console.log('Error deleting course:', err)})
-  };
+  const deleteCourse = async () => {
+    await context.actions.deleteCourse(id, authUser.emailAddress, authUser.password);
+    <Navigate to='/'/>
+  }
+
+  const byline = course.User ? 
+    `${course.User.firstName} ${course.User.lastName}` 
+    : 
+    'unknown';
 
   return(
     <main>
@@ -38,7 +46,7 @@ function CourseDetail() {
             <div>
               <h3 className='course--detail--title'>Course</h3>
               <h4 className='course--name'>{course.title}</h4>
-              <p>By {course.firstName} {course.lastName}</p>
+              <p>By {byline}</p>
               <p>{course.description}</p>
             </div>
             <div>

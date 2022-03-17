@@ -36,13 +36,10 @@ export const Provider = (props) => {
     null);
   const [data, setData] = useState();
 
-  console.log(cookie);
-  console.log(authenticatedUser);
-
   const navigate = useNavigate();
     
   const getUser = async (emailAddress, password) => {
-    const response = await apiHandler(`/users`, 'GET', null, true, {emailAddress, password});
+    const response = await apiHandler('users', 'GET', null, true, {emailAddress, password});
     if (response.status === 200) {
       return response.json();
     }
@@ -73,8 +70,8 @@ export const Provider = (props) => {
     Cookies.remove('authenticatedUser');
   }
 
-  const createCourse = async (course) => {
-    const response = await apiHandler('/courses', 'POST', course);
+  const createCourse = async (course, emailAddress, password) => {
+    const response = await apiHandler('courses', 'POST', course, true, {emailAddress, password});
     if (response.status === 201) {
       return [];
     }
@@ -89,7 +86,7 @@ export const Provider = (props) => {
   }
   
   const createUser = async (user) => {
-    const response = await apiHandler('/users', 'POST', user);
+    const response = await apiHandler('users', 'POST', user);
     if (response.status === 201) {
       return [];
     }
@@ -103,6 +100,16 @@ export const Provider = (props) => {
     }
   }
 
+  const deleteCourse = async (id, emailAddress, password) => {
+    const response = await apiHandler(`courses/${id}`, 'DELETE', null, true, {emailAddress, password});
+    if (response.status === 204) {
+      return console.log('Course deleted');
+    } else {
+      return console.log('Error deleting course');
+    }
+  }
+  
+
   const cancelHandler = (e) => {
     e.preventDefault();
     navigate('/');
@@ -110,13 +117,13 @@ export const Provider = (props) => {
 
   const value = {
     authenticatedUser,
-    data,
     actions: {
       getUser: getUser,
       signIn: signIn,
       signOut: signOut,
       createCourse: createCourse,
       createUser: createUser,
+      deleteCourse: deleteCourse,
       cancelHandler: cancelHandler,
     },
   };

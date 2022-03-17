@@ -30,7 +30,7 @@ function CreateCourse() {
       materialsNeeded
     };
     console.log(course);
-    // createCourse(course);
+    createCourse(course, authUser.emailAddress, authUser.password);
   }
 
   // add onSubmit={createCourse} to form tag
@@ -42,19 +42,19 @@ function CreateCourse() {
           <div className='main--flex'>
             <div>
               <label for='courseTitle'>Course Title</label>
-              <input for='courseTitle' name='courseTitle' type='text' defaultValue='' onChange={(e) => setTitle(e.target.value)}/>
+              <input for='courseTitle' name='courseTitle' type='text' value={title} onChange={(e) => setTitle(e.target.value)}/>
 
               <p>By {authUser.firstName} {authUser.lastName}</p>
 
               <label for='courseDescription'>Course Description</label>
-              <textarea id='courseDescription' name='courseDescription' defaultValue='' onChange={(e) => setDescription(e.target.value)}></textarea>
+              <textarea id='courseDescription' name='courseDescription' value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
             </div>
             <div>
               <label for='estimatedTime'>Estimated Time</label>
-              <input for='estimatedTime' name='estimatedTime' type='text' defaultValue='' onChange={(e) => setEstimatedTime(e.target.value)}/>
+              <input for='estimatedTime' name='estimatedTime' type='text' value={estimatedTime} onChange={(e) => setEstimatedTime(e.target.value)}/>
 
               <label for='materialsNeeded'>Materials Needed</label>
-              <textarea id='materialsNeeded' name='materialsNeeded' defaultValue='' onChange={(e) => setMaterialsNeeded(e.target.value)}></textarea>
+              <textarea id='materialsNeeded' name='materialsNeeded' value={materialsNeeded} onChange={(e) => setMaterialsNeeded(e.target.value)}></textarea>
             </div>
           </div>
           <button className='button' type='submit'>Create Course</button>

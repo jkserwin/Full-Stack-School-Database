@@ -13,7 +13,7 @@ import CourseDetail from './components/CourseDetail';
 import NotFound from './components/NotFound';
 import UserSignIn from './components/UserSignIn';
 import UserSignUp from './components/UserSignUp';
-import UserSignOut from './components/UserSignUp';
+import UserSignOut from './components/UserSignOut';
 
 import { Provider } from './Context';
 
