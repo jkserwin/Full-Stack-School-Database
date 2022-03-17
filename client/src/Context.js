@@ -27,10 +27,15 @@ const apiHandler = (path, method = 'GET', body = null, authRequired = false, cre
 
 export const Provider = (props) => {
 
-  const [authenticatedUser, setAuthenticatedUser] = useState();
+  const cookie = Cookies.get('authenticatedUser');
+
+  const [authenticatedUser, setAuthenticatedUser] = useState(
+    cookie ? 
+    JSON.parse(cookie) 
+    : 
+    null);
   const [data, setData] = useState();
 
-  const cookie = Cookies.get('authenticatedUser');
   console.log(cookie);
   console.log(authenticatedUser);
 

@@ -5,7 +5,10 @@ import { Context } from '../Context';
 export default function UserSignOut() {
 
   const context = useContext(Context);
-  context.actions.signOut();
+
+  useEffect(() => {
+    context.actions.signOut();
+  });
 
   return (
     <Navigate to='/'/>
