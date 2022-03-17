@@ -72,17 +72,7 @@ export const Provider = (props) => {
 
   const createCourse = async (course, emailAddress, password) => {
     const response = await apiHandler('courses', 'POST', course, true, {emailAddress, password});
-    if (response.status === 201) {
-      return [];
-    }
-    else if (response.status === 400) {
-      return response.json().then(data => {
-        return data.errors;
-      });
-    }
-    else {
-      throw new Error();
-    }
+    return response;
   }
   
   const createUser = async (user) => {
