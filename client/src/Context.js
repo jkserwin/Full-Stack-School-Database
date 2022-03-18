@@ -41,6 +41,7 @@ export const Provider = (props) => {
   const getUser = async (emailAddress, password) => {
     const response = await apiHandler('users', 'GET', null, true, {emailAddress, password});
     if (response.status === 200) {
+      console.log(response);
       return response.json();
     }
     else if (response.status === 401) {
@@ -51,14 +52,26 @@ export const Provider = (props) => {
     }
   }
 
+  const getCourses = async () => {
+    const response = await apiHandler('courses');
+    return response;
+  }
+
+  const getCourse = async (id) => {
+    const response = await apiHandler(`courses/${id}`);
+    return response;
+  }
+
   const signIn = async (emailAddress, password) => {
     const user = await getUser(emailAddress, password);
     if (user !== null) {
       setAuthenticatedUser({ ...user, password });
+      console.log(authenticatedUser);
       const cookieOptions = {
-        expires: 1
+        expires: 1,
+        SameSite: 'Lax'
       };
-      Cookies.set('authenticatedUser', JSON.stringify(user), cookieOptions);
+      Cookies.set('authenticatedUser', JSON.stringify(authenticatedUser), cookieOptions);
     } else if (user === null) {
 
     }
@@ -109,6 +122,8 @@ export const Provider = (props) => {
     authenticatedUser,
     actions: {
       getUser: getUser,
+      getCourses: getCourses,
+      getCourse: getCourse,
       signIn: signIn,
       signOut: signOut,
       createCourse: createCourse,

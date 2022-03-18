@@ -34,6 +34,7 @@ class App extends Component {
               <Route path="/signin" element={<UserSignIn/>} />
               <Route path="/signup" element={<UserSignUp/>} />
               <Route path="/signout" element={<UserSignOut/>} />
+              <Route path="/notfound" element={<NotFound/>} />
               <Route element={NotFound} />
             </Routes>
           </Provider>

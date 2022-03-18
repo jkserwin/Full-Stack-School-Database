@@ -17,7 +17,7 @@ function CourseDetail() {
       .then(res => res.json())
       .then(data => setCourse(data))
       .catch(err => {console.log('Error fetching and parsing data', err)});
-  }, [id]);
+  }, []);
 
   const deleteCourse = async () => {
     await context.actions.deleteCourse(id, authUser.emailAddress, authUser.password);

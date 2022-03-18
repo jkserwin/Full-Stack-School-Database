@@ -1,17 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Context } from '../Context';
 
 import UnhandledError from './UnhandledError';
 
 function Courses() {
 
   const [ courses, setCourses ] = useState([]);
+  const coursesRef = useRef(courses);
+  const context = useContext(Context);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/courses')
-      .then(res => res.json())
-      .then(data => setCourses(data))
-      .catch(err => {console.log('Error fetching and parsing data', err)});
+    const getCourses = async () => {
+      await context.actions.getCourses()
+        .then(response => response.json())
+        .then(data => setCourses(data))
+        .catch(error => {
+          navigate('/notfound')
+        })
+    }
+    getCourses();
   }, []);
 
   let courseLinks;

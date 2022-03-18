@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
 
 import UnhandledError from './UnhandledError';
@@ -7,6 +7,7 @@ import UnhandledError from './UnhandledError';
 function CreateCourse() {
 
   const context = useContext(Context);
+  const navigate = useNavigate();
 
   const [ title, setTitle ] = useState('');
   const [ description, setDescription ] = useState('');
@@ -31,6 +32,7 @@ function CreateCourse() {
     };
     console.log(course);
     createCourse(course, authUser.emailAddress, authUser.password);
+    navigate('/');
   }
 
   // add onSubmit={createCourse} to form tag
