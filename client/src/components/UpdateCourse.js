@@ -16,6 +16,7 @@ function UpdateCourse () {
   const [ materialsNeeded, setMaterialsNeeded ] = useState('');
   const [ userId, setUserId ] = useState('');
   const [ errors, setErrors ] = useState([]);
+  const [ isMounted, setIsMounted ] = useState(false);
   
   // Calls getCourse function from context; if a course is found, updates state with data; if no course is found, navigates to /notfound route
   useEffect(() => {
@@ -44,8 +45,9 @@ function UpdateCourse () {
           navigate('/error')
         })
     }
-    getCourse()
-  }, [id]);
+    getCourse();
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     const checkUserAuth = () => {
@@ -59,10 +61,12 @@ function UpdateCourse () {
         return false;
       }
     }
-    if (checkUserAuth()) {
-      return;
-    } else {
-      navigate('/forbidden')
+    if (isMounted) {
+      if (checkUserAuth()) {
+        return;
+      } else {
+        navigate('/forbidden')
+      }
     }
   }, [userId]);
 
