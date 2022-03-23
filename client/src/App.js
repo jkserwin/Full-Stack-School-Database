@@ -15,6 +15,7 @@ import UserSignIn from './components/UserSignIn';
 import UserSignUp from './components/UserSignUp';
 import UserSignOut from './components/UserSignOut';
 import UnhandledError from './components/UnhandledError';
+import Forbidden from './components/Forbidden';
 import PrivateRoute from './PrivateRoute';
 
 import { Provider } from './Context';
@@ -29,7 +30,8 @@ class App extends Component {
           <Provider>
             <Header />
             <Routes>
-              <Route path="/" element={<Courses/>} />
+              <Route exact path="/" element={<Courses/>} />
+              <Route exact path="/courses" element={<Courses/>} />
               <Route path="/courses/create" element={<PrivateRoute/>}>
                 <Route path='' element={<CreateCourse/>}/>
               </Route>
@@ -41,8 +43,9 @@ class App extends Component {
               <Route path="/signup" element={<UserSignUp/>} />
               <Route path="/signout" element={<UserSignOut/>} />
               <Route path="/notfound" element={<NotFound/>} />
+              <Route path="/forbidden" element={<Forbidden/>} />
+              <Route path="/error" element={<UnhandledError/>} />
               <Route element={NotFound} />
-              <Route element={UnhandledError} />
             </Routes>
           </Provider>
         </div>

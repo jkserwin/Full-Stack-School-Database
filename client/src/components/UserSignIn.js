@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
 
@@ -16,8 +16,12 @@ function UserSignIn() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    context.actions.signIn(emailAddress, password);
-    navigate('/');
+    const signIn = context.actions.signIn(emailAddress, password);
+    if (!signIn) {
+      navigate('/signin')
+    } else {
+      navigate(-2);
+    }
   };
 
   return(

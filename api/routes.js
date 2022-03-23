@@ -47,7 +47,11 @@ router.get('/courses', asyncHandler(async (req, res) => {
             }
         ]
     });
-    res.status(200).json(courses);
+    if (courses) {
+        res.status(200).json(courses);
+    } else {
+        res.status(404).json({message: 'Courses not found'});
+    }
 }));
 
 // Route that returns a specific course and associated users.
@@ -63,7 +67,11 @@ router.get('/courses/:id', asyncHandler(async (req,res) => {
             ]
         }
     );
-    res.status(200).json(course);
+    if (course) {
+        res.status(200).json(course);
+    } else {
+        res.status(404).json({message: 'Course not found'});
+    }
 }));
 
 // Route that creates a new course.

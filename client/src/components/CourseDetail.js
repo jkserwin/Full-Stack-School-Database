@@ -1,37 +1,62 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useParams, Navigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { Context } from '../Context';
-
-import UnhandledError from './UnhandledError';
 
 function CourseDetail() {
 
   const context = useContext(Context);
+  const navigate = useNavigate();
   const authUser = context.authenticatedUser;
-
-  const [ course, setCourse ] = useState([]);
+  const [ title, setTitle ] = useState('');
+  const [ description, setDescription ] = useState('');
+  const [ estimatedTime, setEstimatedTime ] = useState('');
+  const [ materialsNeeded, setMaterialsNeeded ] = useState('');
+  const [ userId, setUserId ] = useState('');
+  const [ assocUser, setAssocUser ] = useState('');
   const { id } = useParams();
 
+  // Calls getCourse function from context; if a course is found, updates state with data; if no course is found, navigates to /notfound route
   useEffect(() => {
-    fetch(`http://localhost:5000/api/courses/${id}`)
-      .then(res => res.json())
-      .then(data => setCourse(data))
-      .catch(err => {console.log('Error fetching and parsing data', err)});
-  }, []);
+    const getCourse = async () => {
+      await context.actions.getCourse(id)
+        .then(response => {
+          if (response.status === 200) {
+            response.json().then(data => {
+              setAssocUser(data.User);
+              setTitle(data.title);
+              setDescription(data.description);
+              (data.estimatedTime) 
+                ? setEstimatedTime(data.estimatedTime) 
+                : setEstimatedTime('')
+              ;
+              (data.materialsNeeded) 
+                ? setMaterialsNeeded(data.materialsNeeded) 
+                : setMaterialsNeeded('')
+              ;
+              setUserId(data.userId);
+            })
+          } if (response.status === 404) {
+            navigate('/notfound');
+          }
+        })
+        .catch(error => {
+          navigate('/error')
+        });
+    }
+    getCourse()
+  }, [id]);
 
+  // Places DELETE request to server and navigates to main page
   const deleteCourse = async () => {
     await context.actions.deleteCourse(id, authUser.emailAddress, authUser.password);
-    <Navigate to='/'/>
+    navigate('/');
   }
 
-  const byline = course.User ? 
-    `${course.User.firstName} ${course.User.lastName}` 
-    : 
-    'unknown';
-
+  // Checks if current user is associated with this course
   const checkUserAuth = () => {
     if (authUser) {
-      if (authUser.id === course.userId) {
+      if (authUser.id === userId) {
         return true;
       } else {
         return false;
@@ -41,11 +66,12 @@ function CourseDetail() {
     }
   }
 
+  // Displays Update and Delete Course buttons if current user is associated with this course
   let buttons;
   if (checkUserAuth()) {
     buttons = 
       <div className='wrap'>
-        <Link className='button' to={`/courses/${course.id}/update`}>Update Course</Link>
+        <Link className='button' to={`/courses/${id}/update`}>Update Course</Link>
         <Link className='button' to='/' onClick={deleteCourse}>Delete Course</Link>
         <Link className='button button-secondary' to='/'>Return to List</Link>
       </div>
@@ -68,16 +94,16 @@ function CourseDetail() {
           <div className='main--flex'>
             <div>
               <h3 className='course--detail--title'>Course</h3>
-              <h4 className='course--name'>{course.title}</h4>
-              <p>By {byline}</p>
-              <p>{course.description}</p>
+              <h4 className='course--name'>{title}</h4>
+              <p>By {assocUser.firstName} {assocUser.lastName}</p>
+              <ReactMarkdown>{description}</ReactMarkdown>
             </div>
             <div>
               <h3 className='course--detail--title'>Estimated Time</h3>
-              <p>{course.estimatedTime}</p>
+              <p>{estimatedTime}</p>
               <h3 className='course--detail--title'>Materials Needed</h3>
               <ul className='course--detail--list'>
-                {course.materialsNeeded}
+                <ReactMarkdown>{materialsNeeded}</ReactMarkdown>
               </ul>
             </div>
           </div>

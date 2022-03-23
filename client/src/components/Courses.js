@@ -13,10 +13,15 @@ function Courses() {
   useEffect(() => {
     const getCourses = async () => {
       await context.actions.getCourses()
-        .then(response => response.json())
-        .then(data => setCourses(data))
+        .then(response => {
+          if (response.status === 200) {
+            response.json().then(data => setCourses(data))
+          } else if (response.status === 404) {
+            navigate('/notfound')
+          }
+        })
         .catch(error => {
-          navigate('/notfound')
+          navigate('/error')
         })
     }
     getCourses();

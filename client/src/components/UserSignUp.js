@@ -1,33 +1,65 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
+import ValidationErrors from './ValidationErrors';
 
 function UserSignUp() {
 
   const context = useContext(Context);
+  const navigate = useNavigate();
 
-  const [ firstName, setFirstName ] = useState();
-  const [ lastName, setLastName ] = useState();
-  const [ emailAddress, setEmailAddress ] = useState();
-  const [ password, setPassword ] = useState();
+  const [ firstName, setFirstName ] = useState('');
+  const [ lastName, setLastName ] = useState('');
+  const [ emailAddress, setEmailAddress ] = useState('');
+  const [ password, setPassword ] = useState('');
+  const [ errors, setErrors ] = useState([])
   
   const cancel = (e) => {
     context.actions.cancelHandler(e);
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const user = {
+      firstName,
+      lastName,
+      emailAddress,
+      password
+    };
+    context.actions.createUser(user)
+      .then(response => {
+        if (response.status === 201) {
+          const response = context.actions.signIn(user.emailAddress, user.password);
+          navigate(-1);
+        } else if (response.status === 400) {
+          response.json().then(data => {
+            setErrors(data.errors)
+          })
+        }
+      })
+      .catch(error => {
+        navigate('/error')
+      });
   }
 
   return(
     <main>
       <div className='form--centered'>
         <h2>Sign Up</h2>
-        <form>
+        {
+          (errors.length > 0)
+          ? (<ValidationErrors errors={errors}/>)
+          : null
+        }
+        <form onSubmit={handleSubmit}>
           <label for='firstName'>First Name</label>
-          <input id='firstName' name='firstName' type='text' defaultValue='' onChange={(e) => setFirstName(e.target.value)}/>
+          <input id='firstName' name='firstName' type='text' value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
           <label for='lastName'>Last Name</label>
-          <input id='lastName' name='lastName' type='text' defaultValue='' onChange={(e) => setLastName(e.target.value)}/>
+          <input id='lastName' name='lastName' type='text' value={lastName} onChange={(e) => setLastName(e.target.value)}/>
           <label for='emailAddress'>Email Address</label>
-          <input id='emailAddress' name='emailAddress' type='email' defaultValue='' onChange={(e) => setEmailAddress(e.target.value)}/>
+          <input id='emailAddress' name='emailAddress' type='email' value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)}/>
           <label for='password'>Password</label>
-          <input id='password' name='password' type='password' defaultValue='' onChange={(e) => setPassword(e.target.value)}/>
+          <input id='password' name='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
           <button className='button' type='submit'>Sign Up</button>
           <button className='button button-secondary' onClick={cancel}>Cancel</button>
         </form>

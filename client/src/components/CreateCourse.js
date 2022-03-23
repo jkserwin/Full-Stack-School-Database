@@ -39,7 +39,6 @@ function CreateCourse() {
         } else if (response.status === 400) {
           response.json().then(data => {
             setErrors(data.errors)
-            console.log(errors)
           })
         }
       })
@@ -54,7 +53,7 @@ function CreateCourse() {
         <h2>Create Course</h2>
         {
           (errors.length > 0) 
-          ? (<ValidationErrors props={errors}/>)
+          ? (<ValidationErrors errors={errors}/>)
           : null
         }
         <form onSubmit={handleSubmit}>

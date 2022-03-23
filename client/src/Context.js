@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const Context = createContext();
 
+// configures fetch requests
 const apiHandler = (path, method = 'GET', body = null, authRequired = false, credentials = null) => {
   const url = 'http://localhost:5000/api/' + path;
 
@@ -29,19 +30,20 @@ export const Provider = (props) => {
 
   const cookie = Cookies.get('authenticatedUser');
 
+  // If an 'authenticatedUser' cookie exists, sets its value as authenticatedUser
   const [authenticatedUser, setAuthenticatedUser] = useState(
     cookie ? 
     JSON.parse(cookie) 
     : 
-    null);
-  const [data, setData] = useState();
+    null
+  );
 
   const navigate = useNavigate();
-    
+  
+  // Makes a GET request for information about a specific user
   const getUser = async (emailAddress, password) => {
     const response = await apiHandler('users', 'GET', null, true, {emailAddress, password});
     if (response.status === 200) {
-      console.log(response);
       return response.json();
     }
     else if (response.status === 401) {
@@ -52,62 +54,61 @@ export const Provider = (props) => {
     }
   }
 
+  // Makes a GET request for information about all courses
   const getCourses = async () => {
     const response = await apiHandler('courses');
     return response;
   }
 
+  // Makes a GET request for information about a specific course
   const getCourse = async (id) => {
     const response = await apiHandler(`courses/${id}`);
     return response;
   }
 
+  // Checks if supplied user credentials match a known user and, if so, sets that user as authenticatedUser
   const signIn = async (emailAddress, password) => {
-    const user = await getUser(emailAddress, password);
-    if (user !== null) {
-      setAuthenticatedUser({ ...user, password });
-      console.log(authenticatedUser);
+    const response = await getUser(emailAddress, password);
+    if (response !== null) {
+      setAuthenticatedUser({ ...response, password });
       const cookieOptions = {
         expires: 1,
         SameSite: 'Lax'
       };
-      Cookies.set('authenticatedUser', JSON.stringify({...user, password}), cookieOptions);
-    } else if (user === null) {
-
+      Cookies.set('authenticatedUser', JSON.stringify({...response, password}), cookieOptions);
+      console.log('true');
+      return true;
+    } else {
+      console.log('false');
+      return false;
     }
-    return user;
   }
 
+  // Removes current authenticatedUser from state and cookies
   const signOut = () => {
     setAuthenticatedUser(null);
     Cookies.remove('authenticatedUser');
   }
 
+  // Makes a POST request to create a new course
   const createCourse = async (course, emailAddress, password) => {
     const response = await apiHandler('courses', 'POST', course, true, {emailAddress, password});
     return response;
   }
   
+  // Makes a POST request to create a new user
   const createUser = async (user) => {
     const response = await apiHandler('users', 'POST', user);
-    if (response.status === 201) {
-      return [];
-    }
-    else if (response.status === 400) {
-      return response.json().then(data => {
-        return data.errors;
-      });
-    }
-    else {
-      throw new Error();
-    }
+    return response;
   }
 
+  // Makes a PUT request to update an existing course
   const updateCourse = async (id, body, emailAddress, password) => {
     const response = await apiHandler(`courses/${id}`, 'PUT', body, true, {emailAddress, password});
     return response;
   }
 
+  // Makes a DELETE request to delete an existing course
   const deleteCourse = async (id, emailAddress, password) => {
     const response = await apiHandler(`courses/${id}`, 'DELETE', null, true, {emailAddress, password});
     if (response.status === 204) {
@@ -117,7 +118,6 @@ export const Provider = (props) => {
     }
   }
   
-
   const cancelHandler = (e) => {
     e.preventDefault();
     navigate(-1);
@@ -148,13 +148,3 @@ export const Provider = (props) => {
 }
 
 export const Consumer = Context.Consumer;
-
-// export default function withContext(Component) {
-//   return function ContextComponent(props) {
-//     return (
-//       <Context.Consumer>
-//         {context => <Component {...props} context={context} />}
-//       </Context.Consumer>
-//     );
-//   }
-// }

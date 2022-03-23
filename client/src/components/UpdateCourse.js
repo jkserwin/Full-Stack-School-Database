@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
-
-import UnhandledError from './UnhandledError';
+import ValidationErrors from './ValidationErrors';
 
 function UpdateCourse () {
 
@@ -15,31 +14,57 @@ function UpdateCourse () {
   const [ description, setDescription ] = useState('');
   const [ estimatedTime, setEstimatedTime ] = useState('');
   const [ materialsNeeded, setMaterialsNeeded ] = useState('');
-
+  const [ userId, setUserId ] = useState('');
+  const [ errors, setErrors ] = useState([]);
+  
+  // Calls getCourse function from context; if a course is found, updates state with data; if no course is found, navigates to /notfound route
   useEffect(() => {
     const getCourse = async () => {
       await context.actions.getCourse(id)
-        .then(response => response.json())
-        .then(data => {
-          setTitle(data.title);
-          setDescription(data.description);
-          if (data.estimatedTime) {
-            setEstimatedTime(data.estimatedTime);
-          } else {
-            setEstimatedTime('');
-          };
-          if (data.materialsNeeded) {
-            setMaterialsNeeded(data.materialsNeeded);
-          } else {
-            setMaterialsNeeded('');
-          };
+        .then(response => {
+          if (response.status === 200) {
+            response.json().then(data => {
+              setTitle(data.title);
+              setDescription(data.description);
+              (data.estimatedTime) 
+                ? setEstimatedTime(data.estimatedTime) 
+                : setEstimatedTime('')
+              ;
+              (data.materialsNeeded) 
+                ? setMaterialsNeeded(data.materialsNeeded) 
+                : setMaterialsNeeded('')
+              ;
+              setUserId(data.userId);
+            })
+          } if (response.status === 404) {
+            navigate('/notfound')
+          }
         })
         .catch(error => {
-          navigate('/notfound')
+          navigate('/error')
         })
     }
     getCourse()
   }, [id]);
+
+  useEffect(() => {
+    const checkUserAuth = () => {
+      if (authUser) {
+        if (authUser.id === userId) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    if (checkUserAuth()) {
+      return;
+    } else {
+      navigate('/forbidden')
+    }
+  }, [userId]);
 
   const cancel = (e) => {
     context.actions.cancelHandler(e);
@@ -53,14 +78,30 @@ function UpdateCourse () {
       estimatedTime: estimatedTime,
       materialsNeeded: materialsNeeded
     };
-    context.actions.updateCourse(id, updatedCourse, authUser.emailAddress, authUser.password);
-    navigate(-1);
+    context.actions.updateCourse(id, updatedCourse, authUser.emailAddress, authUser.password)
+      .then(response => {
+        if (response.status === 204) {
+          navigate(-1);
+        } else if (response.status === 400) {
+          response.json().then(data => {
+            setErrors(data.errors)
+          })
+        }
+      })
+      .catch(error => {
+        navigate('/error')
+      });
   }
 
   return(
     <main>
       <div className='wrap'>
         <h2>Update Course</h2>
+        {
+          (errors.length > 0) 
+          ? (<ValidationErrors errors={errors}/>)
+          : null
+        }
         <form onSubmit={handleSubmit}>
           <div className='main--flex'>
             <div>

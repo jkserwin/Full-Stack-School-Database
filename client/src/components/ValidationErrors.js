@@ -1,5 +1,4 @@
-const ValidationErrors = (props) => {
-  const errors = [props.data];
+const ValidationErrors = ({errors}) => {
 
   return (
     <div className="validation--errors">
