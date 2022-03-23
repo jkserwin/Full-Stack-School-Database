@@ -29,14 +29,37 @@ function CourseDetail() {
     : 
     'unknown';
 
+  const checkUserAuth = () => {
+    if (authUser) {
+      if (authUser.id === course.userId) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  let buttons;
+  if (checkUserAuth()) {
+    buttons = 
+      <div className='wrap'>
+        <Link className='button' to={`/courses/${course.id}/update`}>Update Course</Link>
+        <Link className='button' to='/' onClick={deleteCourse}>Delete Course</Link>
+        <Link className='button button-secondary' to='/'>Return to List</Link>
+      </div>
+  } else {
+    buttons = 
+      <div className='wrap'>
+        <Link className='button button-secondary' to='/'>Return to List</Link>
+      </div>
+  }
+
   return(
     <main>
       <div className='actions--bar'>
-        <div className='wrap'>
-          <Link className='button' to={`/courses/${course.id}/update`}>Update Course</Link>
-          <Link className='button' to='/' onClick={deleteCourse}>Delete Course</Link>
-          <Link className='button button-secondary' to='/'>Return to List</Link>
-        </div>
+        {buttons}
       </div>
 
       <div className='wrap'>
@@ -54,7 +77,7 @@ function CourseDetail() {
               <p>{course.estimatedTime}</p>
               <h3 className='course--detail--title'>Materials Needed</h3>
               <ul className='course--detail--list'>
-                {course.materials}
+                {course.materialsNeeded}
               </ul>
             </div>
           </div>

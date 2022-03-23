@@ -71,7 +71,7 @@ export const Provider = (props) => {
         expires: 1,
         SameSite: 'Lax'
       };
-      Cookies.set('authenticatedUser', JSON.stringify(authenticatedUser), cookieOptions);
+      Cookies.set('authenticatedUser', JSON.stringify({...user, password}), cookieOptions);
     } else if (user === null) {
 
     }
@@ -103,6 +103,11 @@ export const Provider = (props) => {
     }
   }
 
+  const updateCourse = async (id, body, emailAddress, password) => {
+    const response = await apiHandler(`courses/${id}`, 'PUT', body, true, {emailAddress, password});
+    return response;
+  }
+
   const deleteCourse = async (id, emailAddress, password) => {
     const response = await apiHandler(`courses/${id}`, 'DELETE', null, true, {emailAddress, password});
     if (response.status === 204) {
@@ -115,7 +120,7 @@ export const Provider = (props) => {
 
   const cancelHandler = (e) => {
     e.preventDefault();
-    navigate('/');
+    navigate(-1);
   }
 
   const value = {
@@ -128,6 +133,7 @@ export const Provider = (props) => {
       signOut: signOut,
       createCourse: createCourse,
       createUser: createUser,
+      updateCourse: updateCourse,
       deleteCourse: deleteCourse,
       cancelHandler: cancelHandler,
     },

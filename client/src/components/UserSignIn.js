@@ -17,7 +17,7 @@ function UserSignIn() {
   const handleSubmit = e => {
     e.preventDefault();
     context.actions.signIn(emailAddress, password);
-    navigate(-1);
+    navigate('/');
   };
 
   return(

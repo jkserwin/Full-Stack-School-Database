@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
+import ValidationErrors from './ValidationErrors';
 
 import UnhandledError from './UnhandledError';
 
@@ -13,6 +14,7 @@ function CreateCourse() {
   const [ description, setDescription ] = useState('');
   const [ estimatedTime, setEstimatedTime ] = useState('');
   const [ materialsNeeded, setMaterialsNeeded ] = useState('');
+  const [ errors, setErrors ] = useState([])
 
   const authUser = context.authenticatedUser;
   const createCourse = context.actions.createCourse;
@@ -30,16 +32,31 @@ function CreateCourse() {
       estimatedTime,
       materialsNeeded
     };
-    console.log(course);
-    createCourse(course, authUser.emailAddress, authUser.password);
-    navigate('/');
+    createCourse(course, authUser.emailAddress, authUser.password)
+      .then(response => {
+        if (response.status === 201) {
+          navigate('/')
+        } else if (response.status === 400) {
+          response.json().then(data => {
+            setErrors(data.errors)
+            console.log(errors)
+          })
+        }
+      })
+      .catch(error => {
+        navigate('/')
+      });
   }
 
-  // add onSubmit={createCourse} to form tag
   return(
     <main>
       <div className='wrap'>
         <h2>Create Course</h2>
+        {
+          (errors.length > 0) 
+          ? (<ValidationErrors props={errors}/>)
+          : null
+        }
         <form onSubmit={handleSubmit}>
           <div className='main--flex'>
             <div>

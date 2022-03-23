@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
 
 import UnhandledError from './UnhandledError';
@@ -7,10 +7,8 @@ import UnhandledError from './UnhandledError';
 function Courses() {
 
   const [ courses, setCourses ] = useState([]);
-  const coursesRef = useRef(courses);
   const context = useContext(Context);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     const getCourses = async () => {
@@ -22,7 +20,7 @@ function Courses() {
         })
     }
     getCourses();
-  }, []);
+  }, [context.actions, navigate]);
 
   let courseLinks;
   if (courses.length > 0) {
