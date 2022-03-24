@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Context } from './Context';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { authenticatedUser } = useContext(Context);
-  
+  const location = useLocation();
   return (
     authenticatedUser ?
     
@@ -12,7 +12,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     
     :
 
-    <Navigate to='/signin' />
+    <Navigate to='/signin' replace state={{from: location}}/>
   );
 };
 

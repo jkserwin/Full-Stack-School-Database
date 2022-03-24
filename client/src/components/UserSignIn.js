@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
 
 function UserSignIn() {
   
   const context = useContext(Context);
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [ emailAddress, setEmailAddress ] = useState();
@@ -16,11 +17,12 @@ function UserSignIn() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    const signIn = context.actions.signIn(emailAddress, password);
-    if (!signIn) {
-      navigate('/signin')
-    } else {
-      navigate(-2);
+    const signedIn = context.actions.signIn(emailAddress, password);
+    if (signedIn && location.state?.from) {
+      navigate(location.state.from.pathname);
+    } 
+    else {
+      navigate('/signin');
     }
   };
 
@@ -29,9 +31,9 @@ function UserSignIn() {
       <div className='form--centered'>
         <h2>Sign In</h2>
         <form onSubmit={handleSubmit}>
-          <label for='emailAddress'>Email Address</label>
+          <label htmlFor='emailAddress'>Email Address</label>
           <input id='emailAddress' name='emailAddress' type='email' defaultValue='' onChange={(e) => setEmailAddress(e.target.value)}/>
-          <label for='password'>Password</label>
+          <label htmlFor='password'>Password</label>
           <input id='password' name='password' type='password' defaultValue='' onChange={(e) => setPassword(e.target.value)}/>
           <button className='button' type='submit'>Sign In</button>
           <button className='button button-secondary' onClick={cancel}>Cancel</button>
