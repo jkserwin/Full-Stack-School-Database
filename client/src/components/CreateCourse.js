@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../Context';
 import ValidationErrors from './ValidationErrors';
-
-import UnhandledError from './UnhandledError';
 
 function CreateCourse() {
 
@@ -23,6 +21,7 @@ function CreateCourse() {
     context.actions.cancelHandler(e);
   }
 
+  // On submit, collects form data into course object and sends it to server via createCourse method from context. If successful, navigates to list of courses. If unsuccessful, renders validation errors.
   const handleSubmit = (e) => {
     e.preventDefault();
     const course = {
@@ -43,7 +42,7 @@ function CreateCourse() {
         }
       })
       .catch(error => {
-        navigate('/')
+        navigate('/error')
       });
   }
 

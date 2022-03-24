@@ -15,9 +15,10 @@ function UserSignIn() {
     context.actions.cancelHandler(e);
   }
 
-  const handleSubmit = e => {
+  // On submit, places a signIn request via context. If successful, navigates back to previous page. If unsuccessful, reloads /signin route.
+  const handleSubmit = async e => {
     e.preventDefault();
-    const signedIn = context.actions.signIn(emailAddress, password);
+    const signedIn = await context.actions.signIn(emailAddress, password);
     if (signedIn && location.state?.from) {
       navigate(location.state.from.pathname);
     } 

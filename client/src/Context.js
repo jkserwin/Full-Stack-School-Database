@@ -66,7 +66,7 @@ export const Provider = (props) => {
     return response;
   }
 
-  // Checks if supplied user credentials match a known user and, if so, sets that user as authenticatedUser
+  // Checks if supplied user credentials match a known user and, if so, sets that user as authenticatedUser and returns a boolean value.
   const signIn = async (emailAddress, password) => {
     const response = await getUser(emailAddress, password);
     if (response !== null) {
@@ -76,10 +76,8 @@ export const Provider = (props) => {
         SameSite: 'Lax'
       };
       Cookies.set('authenticatedUser', JSON.stringify({...response, password}), cookieOptions);
-      console.log('true');
       return true;
     } else {
-      console.log('false');
       return false;
     }
   }

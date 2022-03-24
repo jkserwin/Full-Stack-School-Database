@@ -18,6 +18,7 @@ function UserSignUp() {
     context.actions.cancelHandler(e);
   }
 
+  // On submit, collects form data into user object and sends it to server via createUser method from context. If successful, signs in as new user and navigates to previous route. If unsuccessful, renders validation errors.
   const handleSubmit = (e) => {
     e.preventDefault();
     const user = {
@@ -29,7 +30,7 @@ function UserSignUp() {
     context.actions.createUser(user)
       .then(response => {
         if (response.status === 201) {
-          const response = context.actions.signIn(user.emailAddress, user.password);
+          context.actions.signIn(user.emailAddress, user.password);
           navigate(-1);
         } else if (response.status === 400) {
           response.json().then(data => {
@@ -52,13 +53,13 @@ function UserSignUp() {
           : null
         }
         <form onSubmit={handleSubmit}>
-          <label for='firstName'>First Name</label>
+          <label htmlFor='firstName'>First Name</label>
           <input id='firstName' name='firstName' type='text' value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
-          <label for='lastName'>Last Name</label>
+          <label htmlFor='lastName'>Last Name</label>
           <input id='lastName' name='lastName' type='text' value={lastName} onChange={(e) => setLastName(e.target.value)}/>
-          <label for='emailAddress'>Email Address</label>
+          <label htmlFor='emailAddress'>Email Address</label>
           <input id='emailAddress' name='emailAddress' type='email' value={emailAddress} onChange={(e) => setEmailAddress(e.target.value)}/>
-          <label for='password'>Password</label>
+          <label htmlFor='password'>Password</label>
           <input id='password' name='password' type='password' value={password} onChange={(e) => setPassword(e.target.value)}/>
           <button className='button' type='submit'>Sign Up</button>
           <button className='button button-secondary' onClick={cancel}>Cancel</button>

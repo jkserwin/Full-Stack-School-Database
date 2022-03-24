@@ -10,6 +10,7 @@ function Courses() {
   const context = useContext(Context);
   const navigate = useNavigate();
 
+  // Calls getCourses function from context. If successful, adds response data to state as "courses". If unsuccessful, navigates to /notfound route.
   useEffect(() => {
     const getCourses = async () => {
       await context.actions.getCourses()
@@ -27,6 +28,7 @@ function Courses() {
     getCourses();
   }, [context.actions, navigate]);
 
+  // Maps each course object in courses state to a Link and holds these links in a courseLinks variable.
   let courseLinks;
   if (courses.length > 0) {
     courseLinks = courses.map(course => 

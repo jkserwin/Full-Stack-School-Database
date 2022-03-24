@@ -27,14 +27,14 @@ function UpdateCourse () {
             response.json().then(data => {
               setTitle(data.title);
               setDescription(data.description);
-              (data.estimatedTime) 
-                ? setEstimatedTime(data.estimatedTime) 
-                : setEstimatedTime('')
-              ;
-              (data.materialsNeeded) 
-                ? setMaterialsNeeded(data.materialsNeeded) 
-                : setMaterialsNeeded('')
-              ;
+              (data.estimatedTime) ? 
+                setEstimatedTime(data.estimatedTime) 
+                : 
+                setEstimatedTime('');
+              (data.materialsNeeded) ? 
+                setMaterialsNeeded(data.materialsNeeded) 
+                : 
+                setMaterialsNeeded('');
               setUserId(data.userId);
             })
           } if (response.status === 404) {
@@ -49,6 +49,7 @@ function UpdateCourse () {
     setIsMounted(true);
   }, []);
 
+  // Checks that currently authenticated user is associated with this course before rendering page; if not associated, navigates to /forbidden
   useEffect(() => {
     const checkUserAuth = () => {
       if (authUser) {
@@ -74,6 +75,7 @@ function UpdateCourse () {
     context.actions.cancelHandler(e);
   }
 
+  // On submit, collects form data into updatedCourse object and sends it to server via updateCourse method from context; if successful, navigates to CourseDetail page for this course; if unsuccessful, renders validation errors.
   const handleSubmit = (e) => {
     e.preventDefault();
     let updatedCourse = {
