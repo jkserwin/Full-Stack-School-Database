@@ -36,6 +36,8 @@ function UserSignUp() {
           response.json().then(data => {
             setErrors(data.errors)
           })
+        } else if (response.status === 500) {
+          navigate('/error')
         }
       })
       .catch(error => {

@@ -30,8 +30,8 @@ class App extends Component {
           <Provider>
             <Header />
             <Routes>
-              <Route exact path="/" element={<Courses/>} />
-              <Route exact path="/courses" element={<Courses/>} />
+              <Route path="/" element={<Courses/>} />
+              <Route path="/courses" element={<Courses/>} />
               <Route path="/courses/create" element={<PrivateRoute/>}>
                 <Route path='' element={<CreateCourse/>}/>
               </Route>
@@ -45,7 +45,7 @@ class App extends Component {
               <Route path="/notfound" element={<NotFound/>} />
               <Route path="/forbidden" element={<Forbidden/>} />
               <Route path="/error" element={<UnhandledError/>} />
-              <Route element={NotFound} />
+              <Route path="*" element={<NotFound/>} />
             </Routes>
           </Provider>
         </div>
